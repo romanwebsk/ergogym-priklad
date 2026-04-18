@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERGO GYM | Domov</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #fefb00;
+            --black: #0a0a0a;
+            --dark-grey: #121212;
+            --light-grey: #1c1c1c;
+            --white: #ffffff;
+            --text-muted: #888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+        }
+
+            html::-webkit-scrollbar {
+            display: none;
+        }
+
+
+            html {
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
+        }
+        /* Navigácia */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%; 
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s ease;
+        }
+
+        nav .logo {
+            font-weight: 900;
+            font-size: 32px;
+            text-decoration: none;
+            color: var(--white);
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        nav .logo span { color: var(--primary); }
+
+        nav ul { 
+            display: flex; 
+            list-style: none; 
+            gap: 40px; 
+            align-items: center;
+        }
+
+        nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover { color: var(--primary); }
+         nav ul li a.active { color: var(--primary); }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 7px;
+            z-index: 3001;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 32px;
+            height: 3px;
+            background-color: var(--white);
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) { transform: translateY(10px) rotate(45deg); background-color: var(--primary); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: translateY(-10px) rotate(-45deg); background-color: var(--primary); }
+
+        /* Hero Sekcia */
+        header {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero-slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .hero-slide.active { opacity: 1; }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8));
+            z-index: 2;
+        }
+
+        header h1 {
+            position: relative;
+            z-index: 3;
+            font-size: clamp(45px, 12vw, 90px);
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 0.9;
+        }
+
+        header p {
+            position: relative;
+            z-index: 3;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 15px;
+            font-size: clamp(12px, 2.5vw, 16px);
+        }
+
+        /* Pricing & Hours Layout */
+        .full-section {
+            padding: 120px 8%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .pricing-container { 
+            display: flex; 
+            gap: 100px; 
+            align-items: stretch; 
+            flex-wrap: wrap; 
+        }
+
+        .pricing-side { flex: 2; min-width: 350px; display: flex; flex-direction: column; }
+        .hours-side { flex: 1.2; min-width: 300px; display: flex; flex-direction: column; }
+
+        .section-title { 
+            font-size: clamp(24px, 3.5vw, 32px); 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            margin-bottom: 30px; 
+            height: 50px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            letter-spacing: 1px; 
+        }
+
+        .section-title span { color: var(--primary); margin-left: 10px; }
+        
+        .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; flex-grow: 1; }
+        .price-card { background: var(--dark-grey); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #222; display: flex; flex-direction: column; justify-content: center; transition: 0.3s; }
+        .price-card:hover { border-color: var(--primary); }
+        .price-card h3 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .price-card .amount { font-size: 32px; font-weight: 900; color: var(--primary); }
+        .price-card .note { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+        
+        .hours-mini { background: var(--dark-grey); padding: 30px; border-radius: 12px; border: 1px solid #222; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .hours-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; font-size: 14px; }
+        .hours-row:last-child { border: none; }
+        .hours-row span:last-child { color: var(--primary); font-weight: 700; }
+
+        /* App Section */
+        .app-full-section { min-height: 100vh; background-color: var(--dark-grey); display: flex; align-items: center; }
+        .app-container { display: flex; align-items: center; flex-wrap: wrap; width: 100%; }
+        .app-text-side { flex: 1; padding: 60px 8%; min-width: 350px; }
+        .app-text-side h2 { font-size: clamp(32px, 5vw, 48px); font-weight: 900; text-transform: uppercase; margin-bottom: 25px; line-height: 1.1; }
+        .app-text-side h2 span { color: var(--primary); }
+        .app-text-side p { margin-bottom: 20px; font-size: 18px; color: #ccc; }
+        .app-image-side { flex: 1.4; height: 100vh; min-width: 400px; }
+        .app-image-side img { width: 100%; height: 100%; object-fit: cover; }
+        .store-btns { display: flex; gap: 15px; margin-top: 35px; }
+        .btn { background: var(--white); color: var(--black); padding: 12px 30px; border-radius: 5px; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 12px; transition: 0.3s; }
+        .btn:hover { background: var(--primary); }
+
+        /* Footer Stylings */
+        footer { 
+            text-align: center; 
+            padding: 30px 30px 30px 30px; 
+            color: #444; 
+            font-size: 12px; 
+            background: var(--dark-grey); /* Matched to App section */
+            border-top: 1px solid rgba(255,255,255,0.05); /* Thin separator line */
+        }
+
+        .footer-logo {
+            font-weight: 900;
+            font-size: 24px;
+            text-decoration: none;
+            color: var(--white);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .footer-logo span { color: var(--primary); }
+
+        @media (max-width: 992px) {
+            .hamburger { display: flex; }
+            nav ul {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                height: 100vh;
+                background: #0a0a0a;
+                flex-direction: column;
+                justify-content: center;
+                gap: 40px;
+                transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                box-shadow: -15px 0 40px rgba(0,0,0,0.9);
+                z-index: 3000;
+            }
+            nav ul.active { right: 0; }
+            nav ul li a { font-size: 24px; }
+
+            .pricing-container { flex-direction: column; gap: 60px; }
+            .pricing-side, .hours-side { flex: none; width: 100%; }
+            .app-image-side { height: 50vh; order: 2; }
+            .app-text-side { order: 1; text-align: center; padding: 60px 8%; }
+            .store-btns { justify-content: center; }
+        }
+
+        @media (max-width: 600px) {
+            nav { padding: 15px 8%; }
+            nav .logo { font-size: 26px; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .store-btns { flex-direction: column; align-items: center; }
+            .btn { width: 100%; max-width: 250px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">ERGO <span>GYM</span></a>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul id="nav-links">
+            <li><a href="index.html" class="active" >Domov</a></li>
+            <li><a href="galeria.html">Galéria</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <div class="hero-slideshow" id="slideshow"></div>
+        <div class="hero-overlay"></div>
+        <h1>ERGO GYM</h1>
+        <p>Autonómne fitness centrum</p>
+    </header>
+
+    <section class="full-section">
+        <div class="pricing-container">
+            <div class="pricing-side">
+                <h2 class="section-title">Aktuálny <span>Cenník</span></h2>
+                <div class="pricing-grid">
+                    <div class="price-card">
+                        <h3>Jednorazový Vstup</h3>
+                        <div class="amount">6,50 €</div>
+                    </div>
+                    <div class="price-card">
+                        <h3>Vstup študent</h3>
+                        <div class="amount">4,50 €</div>
+                        <p class="note">* V čase od 7:00 do 16:00</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>Mesačná permanentka</h3>
+                        <div class="amount">53 €</div>
+                        <p class="note">* Platnosť 30 dní od zakúpenia</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>10 vstupová</h3>
+                        <div class="amount">55 €</div>
+                        <p class="note">* Platnosť 3 mesiace</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>20 vstupová</h3>
+                        <div class="amount">100 €</div>
+                        <p class="note">* Platnosť 3 mesiace</p>
+                    </div>
+                    <div class="price-card">
+                        <h3>30 vstupová</h3>
+                        <div class="amount">135 €</div>
+                        <p class="note">* Platnosť 4 mesiace</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hours-side">
+                <h2 class="section-title">Otváracie <span>Hodiny</span></h2>
+                <div class="hours-mini">
+                    <div class="hours-row"><span>Pondelok</span><span>07:00 – 20:00</span></div>
+                    <div class="hours-row"><span>Utorok</span><span>07:00 – 20:00</span></div>
+                    <div class="hours-row"><span>Streda</span><span>07:00 – 20:00</span></div>
+                    <div class="hours-row"><span>Štvrtok</span><span>07:00 – 20:00</span></div>
+                    <div class="hours-row"><span>Piatok</span><span>07:00 – 20:00</span></div>
+                    <div class="hours-row"><span>Sobota</span><span>09:00 – 13:00</span></div>
+                    <div class="hours-row"><span>Nedeľa</span><span>09:00 – 13:00</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="app-full-section">
+        <div class="app-container">
+            <div class="app-text-side">
+                <h2>Mobilná <span>Aplikácia</span></h2>
+                <p>Spúšťame novú mobilnú aplikáciu fitnes centra Ergo gym.</p>
+                <p>Maj svoju virtuálnu permanentku fitnes centra vždy po ruke a buď informovaný o všetkých novinkách.</p>
+                <p style="font-weight: bold; color: var(--primary);">Dostupná pre Android a iOS.</p>
+                <div class="store-btns">
+                    <a href="https://apps.apple.com/us/app/ergogym-bratislava/id6514317859" target="_blank" class="btn">App Store</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.ergogym&hl=sk" target="_blank" class="btn">Google Play</a>
+                </div>
+            </div>
+            <div class="app-image-side">
+                <img src="mockup.png" alt="Ergo Gym priestory">
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo">ERGO <span>GYM</span></div>
+        <p>&copy; 2026 ERGO GYM BRATISLAVA | Všetky práva vyhradené.</p>
+    </footer>
+
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        const images = [
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094522-1536x1153.jpg",
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102851-1536x1153.jpg",
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102951-1536x1153.jpg",
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102828-1536x1153.jpg",
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102937-1536x1153.jpg",
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094622-1536x1153.jpg",
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_093239-1536x1153.jpg",
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094634-1536x1153.jpg",
+            "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102803-1536x1153.jpg"
+        ];
+
+        const container = document.getElementById('slideshow');
+        images.forEach((src, index) => {
+            const slide = document.createElement('div');
+            slide.className = 'hero-slide' + (index === 0 ? ' active' : '');
+            slide.style.backgroundImage = `url('${src}')`;
+            container.appendChild(slide);
+        });
+
+        const slides = document.querySelectorAll('.hero-slide');
+        let current = 0;
+        function nextSlide() {
+            slides[current].classList.remove('active');
+            current = (current + 1) % slides.length;
+            slides[current].classList.add('active');
+        }
+        setInterval(nextSlide, 4000);
+    </script>
+</body>
+</html>

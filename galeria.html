@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galéria | ERGO GYM</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+--primary: #fefb00;
+--black: #0a0a0a;
+--dark-grey: #121212;
+--light-grey: #1c1c1c;
+--white: #ffffff;
+--text-muted: #888;
+}
+* {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    html, body {
+        overflow-x: hidden;
+        background-color: var(--black);
+        color: var(--white);
+        line-height: 1.6;
+    }
+    html::-webkit-scrollbar {
+            display: none;
+        }
+    html {
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
+        }
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 8%; 
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: 0.3s ease;
+    }
+
+    nav .logo {
+        font-weight: 900;
+        font-size: 32px;
+        text-decoration: none;
+        color: var(--white);
+        text-transform: uppercase;
+    }
+
+    nav .logo span { color: var(--primary); }
+
+    nav ul { 
+        display: flex; 
+        list-style: none; 
+        gap: 40px; 
+        align-items: center;
+    }
+
+    nav ul li a {
+        color: var(--white);
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 17px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+
+    nav ul li a:hover { color: var(--primary); }
+    nav ul li a.active { color: var(--primary); }
+
+    .hamburger {
+        display: none;
+        cursor: pointer;
+        flex-direction: column;
+        gap: 7px;
+        z-index: 3001;
+        padding: 5px;
+    }
+
+    .hamburger span {
+        display: block;
+        width: 32px;
+        height: 3px;
+        background-color: var(--white);
+        transition: 0.3s;
+        border-radius: 2px;
+    }
+
+    .hamburger.active span:nth-child(1) { transform: translateY(10px) rotate(45deg); background-color: var(--primary); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-10px) rotate(-45deg); background-color: var(--primary); }
+
+    .header-spacer {
+        padding-top: 180px;
+        padding-bottom: 60px;
+        text-align: center;
+        background-color: var(--black);
+    }
+
+    .header-spacer h1 {
+        font-size: clamp(36px, 8vw, 64px);
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: -1px;
+    }
+
+    .header-spacer h1 span { color: var(--primary); }
+
+    .header-spacer p {
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 4px;
+        margin-top: 10px;
+        font-weight: 700;
+    }
+
+    .gallery-section {
+        padding: 0 8% 120px 8%;
+        max-width: 1400px;
+        margin: 0 auto;
+        background-color: var(--black);
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+
+    .gallery-item {
+        aspect-ratio: 4/3;
+        overflow: hidden;
+        cursor: pointer;
+        background: var(--dark-grey);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.3s;
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-8px);
+        border-color: var(--primary);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.6s;
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.08);
+    }
+
+    #lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.96);
+        z-index: 4000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(12px);
+    }
+
+    #lightbox-img {
+        max-width: 85%;
+        max-height: 80vh;
+        border-radius: 4px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        opacity: 1;
+        transition: opacity 0.2s;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 30px;
+        right: 40px;
+        color: white;
+        font-size: 50px;
+        cursor: pointer;
+        z-index: 4100;
+        line-height: 1;
+        transition: 0.3s;
+    }
+
+    .close-btn:hover { color: var(--primary); }
+
+    .nav-btn {
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        z-index: 4100;
+        transition: 0.3s;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav-btn span {
+        font-size: 48px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding-bottom: 8px;
+    }
+
+    .nav-btn:hover {
+        background: var(--primary);
+        color: var(--black);
+        border-color: var(--primary);
+    }
+
+    .prev { left: 40px; }
+    .next { right: 40px; }
+
+    footer { 
+        text-align: center; 
+        padding: 30px 30px 30px 30px; 
+        color: #444; 
+        font-size: 12px; 
+        background: var(--black);
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .footer-logo {
+        font-weight: 900;
+        font-size: 24px;
+        text-decoration: none;
+        color: var(--white);
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    .footer-logo span { color: var(--primary); }
+
+    @media (max-width: 992px) {
+        .hamburger { display: flex; }
+        nav ul {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            height: 100vh;
+            background: #0a0a0a;
+            flex-direction: column;
+            justify-content: center;
+            gap: 40px;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: -15px 0 40px rgba(0,0,0,0.9);
+            z-index: 3000;
+        }
+        nav ul.active { right: 0; }
+        nav ul li a { font-size: 24px; }
+        .nav-btn { width: 50px; height: 50px; }
+        .nav-btn span { font-size: 36px; padding-bottom: 5px; }
+        .prev { left: 15px; }
+        .next { right: 15px; }
+    }
+
+    @media (max-width: 600px) {
+        .gallery-grid { grid-template-columns: 1fr; }
+        .header-spacer { padding-top: 140px; }
+    }
+</style>
+</head>
+<body>
+<nav>
+    <a href="index.html" class="logo">ERGO <span>GYM</span></a>
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <ul id="nav-links">
+        <li><a href="index.html">Domov</a></li>
+        <li><a href="galeria.html" class="active">Galéria</a></li>
+        <li><a href="kontakt.html">Kontakt</a></li>
+    </ul>
+</nav>
+
+<div class="header-spacer">
+    <h1>Naša <span>Galéria</span></h1>
+    <p>Prezrite si naše priestory a vybavenie</p>
+</div>
+
+<section class="gallery-section">
+    <div class="gallery-grid">
+        <div class="gallery-item" onclick="openLightbox(0)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094522-1536x1153.jpg" alt="Gym">
+        </div>
+        <div class="gallery-item" onclick="openLightbox(1)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102851-1536x1153.jpg" alt="Gym">
+        </div>
+        <div class="gallery-item" onclick="openLightbox(2)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102951-1536x1153.jpg" alt="Gym">
+        </div>
+        <div class="gallery-item" onclick="openLightbox(3)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102828-1536x1153.jpg" alt="Gym">
+        </div>
+        <div class="gallery-item" onclick="openLightbox(4)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102937-1536x1153.jpg" alt="Gym">
+        </div>
+        <div class="gallery-item" onclick="openLightbox(5)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094622-1536x1153.jpg" alt="Gym">
+        </div>
+        <div class="gallery-item" onclick="openLightbox(6)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_093239-1536x1153.jpg" alt="Gym">
+        </div>
+        <div class="gallery-item" onclick="openLightbox(7)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094634-1536x1153.jpg" alt="Gym">
+        </div>
+        <div class="gallery-item" onclick="openLightbox(8)">
+            <img src="https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102803-1536x1153.jpg" alt="Gym">
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-logo">ERGO <span>GYM</span></div>
+    <p>&copy; 2026 ERGO GYM BRATISLAVA | Všetky práva vyhradené.</p>
+</footer>
+
+<div id="lightbox">
+    <span class="close-btn" onclick="closeLightbox()">&times;</span>
+    <div class="nav-btn prev" onclick="prevImg()"><span>&#8249;</span></div>
+    <img id="lightbox-img" src="">
+    <div class="nav-btn next" onclick="nextImg()"><span>&#8250;</span></div>
+</div>
+
+<script>
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+    });
+
+    const images = [
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094522-1536x1153.jpg",
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102851-1536x1153.jpg",
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102951-1536x1153.jpg",
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102828-1536x1153.jpg",
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102937-1536x1153.jpg",
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094622-1536x1153.jpg",
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_093239-1536x1153.jpg",
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_094634-1536x1153.jpg",
+        "https://www.ergogym.sk/wp-content/uploads/2022/08/IMG_20220801_102803-1536x1153.jpg"
+    ];
+
+    let currentIndex = 0;
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    function openLightbox(index) {
+        currentIndex = index;
+        lightboxImg.src = images[currentIndex];
+        lightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        lightbox.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function nextImg() {
+        currentIndex = (currentIndex + 1) % images.length;
+        updateLightbox();
+    }
+
+    function prevImg() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        updateLightbox();
+    }
+
+    function updateLightbox() {
+        lightboxImg.style.opacity = '0';
+        setTimeout(() => {
+            lightboxImg.src = images[currentIndex];
+            lightboxImg.style.opacity = '1';
+        }, 150);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (lightbox.style.display === 'flex') {
+            if (e.key === 'ArrowRight') nextImg();
+            if (e.key === 'ArrowLeft') prevImg();
+            if (e.key === 'Escape') closeLightbox();
+        }
+    });
+
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+    });
+</script>
+</body>
+</html>
